@@ -1,0 +1,60 @@
+<html><head>
+</head><body>
+<table><tr>
+<th>601.mp4</th>
+<th>601vui.mp4</th>
+<th>709.mp4</th>
+<th>709vui.mp4</th>
+</tr><tr>
+<td><video width="320" height="240" autoplay muted><source src="601.mp4" type="video/mp4"></video></td>
+<td><video width="320" height="240" autoplay muted><source src="601vui.mp4" type="video/mp4"></video></td>
+<td><video width="320" height="240" autoplay muted><source src="709.mp4" type="video/mp4"></video></td>
+<td><video width="320" height="240" autoplay muted><source src="709vui.mp4" type="video/mp4"></video></td>
+</tr></table>
+<br>
+<table><tr>
+<th>hd601.mp4</th>
+<th>hd601vui.mp4</th>
+<th>hd709.mp4</th>
+<th>hd709vui.mp4</th>
+</tr><tr>
+<td><video width="320" height="240" autoplay muted><source src="hd601.mp4" type="video/mp4"></video></td>
+<td><video width="320" height="240" autoplay muted><source src="hd601vui.mp4" type="video/mp4"></video></td>
+<td><video width="320" height="240" autoplay muted><source src="hd709.mp4" type="video/mp4"></video></td>
+<td><video width="320" height="240" autoplay muted><source src="hd709vui.mp4" type="video/mp4"></video></td>
+</tr></table>
+
+</body>
+<script type="text/javascript">
+  const videos = document.getElementsByTagName('video');
+  function processor(videoTag, colorTag) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const analyzeCanvas = () => {
+      context.drawImage(videoTag, 0, 0, videoTag.width, videoTag.height);
+      const { data: [r, g, b] } = context.getImageData(3, 3, 1, 1);
+      console.log(r,g,b);
+      colorTag.innerText = `R: ${r}, G: ${g}, B: ${b}`;
+      if (videoTag.ended || videoTag.paused) {
+        return;
+      }
+      requestAnimationFrame(analyzeCanvas);
+    }
+    videoTag.addEventListener('loadeddata', () => {
+      analyzeCanvas();
+    }, false);
+    // If the video is playing we'll keep checking just in case ;)
+    videoTag.addEventListener('play', () => {
+      requestAnimationFrame(analyzeCanvas);
+    }, false)
+  }
+  for (let i = 0; i < videos.length; ++i) {
+    const videoTag = videos[i];
+    const colorDetailsTag = document.createElement('h2');
+    colorDetailsTag.style = "text-align: center;";
+    colorDetailsTag.innerText = "RGB";
+    videoTag.after(colorDetailsTag);
+    processor(videoTag, colorDetailsTag);
+  }
+</script>
+</html>
